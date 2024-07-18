@@ -55,7 +55,11 @@ clean:
 	@echo "Removing ${REGISTRY}/${PROJECT_ID}/${REPO_NAME}/${APP}:${VERSION}-${TARGETOS}-${TARGETARCH} image"
 	@echo "*****************************************************"
 	@images=$$(docker images --filter=reference="${REGISTRY}/${PROJECT_ID}/${REPO_NAME}/${APP}:${VERSION}-*" -q); \
-	docker rmi $$images -f
+	if [ -z "$$images" ]; then \
+		echo "No images found for ${REGISTRY}/${APP}:${VERSION}-*"; \
+	else \
+		docker rmi $$images -f; \
+	fi
 
 # Build for Linux
 linux:
