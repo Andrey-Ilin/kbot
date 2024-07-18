@@ -38,6 +38,31 @@ export TELE_TOKEN={your-tele-token}
 ./kbot start
 ```
 
+## Docker
+
+For existing env var values for GOOS and GOARCH 
+https://go.dev/doc/install/source#environment
+
+### Build for Linux (default Linux/amd64):
+```
+make image
+```
+
+### Build for macOS:
+```
+make image TARGETOS=darwin TARGETARCH=amd64
+```
+
+### Build for Windows:
+```
+make image TARGETOS=windows TARGETARCH=amd64
+```
+
+### Build for Windows with ARM64 architecture:
+```
+make image TARGETOS=windows TARGETARCH=arm64
+```
+
 ## Commands
 - **Start the bot**: 
 ```
