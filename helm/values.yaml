@@ -7,7 +7,7 @@ image:
   repository: andriiilin/kbot
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.0.4-db41e09-linux-amd64"
+  tag: "v1.0.5-8eb18f5-linux-amd64"
   arch: amd64
 secret:
   name: "kbot"
