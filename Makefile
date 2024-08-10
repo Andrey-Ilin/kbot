@@ -6,6 +6,7 @@ APP=$(shell basename $(shell git remote get-url origin))
 REGISTRY=us-west1-docker.pkg.dev
 PROJECT_ID=kbot-429800
 REPO_NAME=devops-repo
+DOCKER_HUB_REPO_NAME=andriiilin/kbot
 # Get the version from the latest git tag and short commit hash
 VERSION=$(shell git describe --tags --abbrev=0)-$(shell git rev-parse --short HEAD)
 # Default target OS and architecture
@@ -37,16 +38,26 @@ build: get latestVersion format
 	CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -v -o kbot -ldflags "-X="github.com/andrey-ilin/kbot/cmd.appVersion=${VERSION}
 
 # Build the Docker image with the specified build arguments
+imageGoogleCloud:
+	@echo "*****************************************************"
+	@echo "Build for ${TARGETOS} with ${TARGETARCH} architecture"
+	@echo "*****************************************************"
+	docker build --build-arg targetos=${TARGETOS} --build-arg targetarch=${TARGETARCH} . -t ${REGISTRY}/${PROJECT_ID}/${REPO_NAME}/${DOCKER_HUB_REPO_NAME}:${VERSION}-${TARGETOS}-${TARGETARCH}
+
+# Build the Docker image with the specified build arguments
 image:
 	@echo "*****************************************************"
 	@echo "Build for ${TARGETOS} with ${TARGETARCH} architecture"
 	@echo "*****************************************************"
-	docker build --build-arg targetos=${TARGETOS} --build-arg targetarch=${TARGETARCH} . -t ${REGISTRY}/${PROJECT_ID}/${REPO_NAME}/${APP}:${VERSION}-${TARGETOS}-${TARGETARCH}
+	docker build --build-arg targetos=${TARGETOS} --build-arg targetarch=${TARGETARCH} . -t ${DOCKER_HUB_REPO_NAME}:${VERSION}-${TARGETOS}-${TARGETARCH} --no-cache	
 
 
 # Push the Docker image to the registry
 push:
-	docker push ${REGISTRY}/${PROJECT_ID}/${REPO_NAME}/${APP}:${VERSION}-${TARGETOS}-${TARGETARCH}
+	docker push ${DOCKER_HUB_REPO_NAME}:${VERSION}-${TARGETOS}-${TARGETARCH}
+
+pushGoogleCloudRegistery:
+	docker push ${REGISTRY}/${PROJECT_ID}/${REPO_NAME}/${APP}:${VERSION}-${TARGETOS}-${TARGETARCH}	
 	
 # Clean up the built binary
 clean:

@@ -17,7 +17,7 @@ COPY . .
 RUN make build TARGETOS=$targetos TARGETARCH=$targetarch
 
 # Use a minimal base image for the final stage
-FROM scratch
+FROM alpine:latest
 
 # Set the working directory for the final image
 WORKDIR /
@@ -25,8 +25,10 @@ WORKDIR /
 # Copy the built binary from the builder stage
 COPY --from=builder /go/src/app/kbot .
 # Copy the SSL certificates
-COPY --from=alpine:latest /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs
+# COPY --from=alpine:latest /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs
+
+RUN apk add --no-cache ca-certificates
 
 # Set the entrypoint to the built binary
-ENTRYPOINT ["./kbot"]
+CMD ["./kbot", "start"]
 
