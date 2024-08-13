@@ -1,7 +1,7 @@
 # Name of Pipeline
 name: KBOT-CICD
 
-# Triger event
+# Trigger event
 on:
   push:
     branches:
@@ -34,3 +34,31 @@ jobs:
           make pushGithubCloudRegistery VERSION="$VERSION"
         env:
           VERSION: ${{ env.VERSION }}  # Use the VERSION variable
+
+  cd:
+    name: CD
+    needs: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+      - run: echo "VERSION=$(git describe --tags --abbrev=0)-$(git rev-parse --short HEAD)" >> $GITHUB_ENV  
+
+      - uses: mikefarah/yq@master
+        with:
+          cmd: yq -i '.image.tag=strenv(VERSION)' helm/values.yaml
+
+      - name: Configure Git and Push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -am "update version $VERSION"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+permissions:
+  contents: write
