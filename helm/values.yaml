@@ -7,12 +7,8 @@ image:
   repository: ghcr.io/andrey-ilin/kbot
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-<<<<<<< Updated upstream
-  tag: "v1.0.6-3dfc90b"
-=======
   tag: "v1.0.6-59c5f10"
   os: linux
->>>>>>> Stashed changes
   arch: amd64
 secret:
   name: "kbot"
