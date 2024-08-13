@@ -1,0 +1,64 @@
+# Name of Pipeline
+name: KBOT-CICD
+
+# Trigger event
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+# Declare Jobs on Ubuntu latest VM
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensure full Git history is fetched to get tags
+
+      - name: Set VERSION variable
+        run: echo "VERSION=$(git describe --tags --abbrev=0)-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Run test
+        run: make test
+
+      - name: Build and Push image to ghcr.io
+        run: |
+          docker login ghcr.io --username ${{ vars.GH_REGISTERY_USERNAME }} --password ${{ secrets.GH_REGISTRY_TOKEN }}
+          make imageGithubCloud VERSION="$VERSION" TELE_TOKEN=${{ secrets.TELE_TOKEN }}
+          make pushGithubCloudRegistery VERSION="$VERSION"
+        env:
+          VERSION: ${{ env.VERSION }}  # Use the VERSION variable
+
+  cd:
+    name: CD
+    needs: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+      - run: echo "VERSION=$(git describe --tags --abbrev=0)-$(git rev-parse --short HEAD)" >> $GITHUB_ENV  
+
+      - uses: mikefarah/yq@master
+        with:
+          cmd: yq -i '.image.tag=strenv(VERSION)' helm/values.yaml
+
+      - name: Configure Git and Push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -am "update version $VERSION"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+permissions:
+  contents: write

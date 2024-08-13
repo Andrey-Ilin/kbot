@@ -24,11 +24,13 @@ WORKDIR /
 
 # Copy the built binary from the builder stage
 COPY --from=builder /go/src/app/kbot .
-# Copy the SSL certificates
-# COPY --from=alpine:latest /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs
 
+# Install SSL certificates
 RUN apk add --no-cache ca-certificates
+
+# Declare the ARG and then set the environment variable in the final stage
+ARG teletoken=""
+ENV TELE_TOKEN=$teletoken
 
 # Set the entrypoint to the built binary
 CMD ["./kbot", "start"]
-
