@@ -4,7 +4,7 @@
 
 replicaCount: 1
 image:
-  repository: andriiilin/kbot
+  repository: ghcr.io/andrey-ilin/kbot
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "v1.0.6-0778176"
