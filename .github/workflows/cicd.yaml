@@ -1,0 +1,24 @@
+# Name of Pipeline
+name: KBOT-CICD
+
+# Triger event
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+# Declare Jobs on Ubuntu latest VM
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Run test
+        run: make test  
+        
