@@ -6,7 +6,7 @@ FROM quay.io/projectquay/golang:1.20 as builder
 # Define build arguments for target OS and architecture
 ARG targetos=linux
 ARG targetarch=amd64
-ARG TELE_TOKEN=""
+ARG teletoken=""
 
 # Set the working directory inside the container
 WORKDIR /go/src/app
@@ -30,7 +30,7 @@ COPY --from=builder /go/src/app/kbot .
 RUN apk add --no-cache ca-certificates
 
 # Set the TELE_TOKEN environment variable
-ENV TELE_TOKEN=$TELE_TOKEN
+ENV TELE_TOKEN=$teletoken
 
 # Set the entrypoint to the built binary
 CMD ["./kbot", "start"]
