@@ -11,6 +11,7 @@ image:
   os: linux
   arch: amd64
 secret:
+  # secret delivered manualy
   name: "kbot"
   env: "TELE_TOKEN"
   key: "token"
