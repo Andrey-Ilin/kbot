@@ -25,7 +25,7 @@ ifeq ($(strip $(VERSION)), -)
     VERSION = $(get_version_gh)
 endif
 
-TELE_TOKEN ?=
+# TELE_TOKEN ?=
 
 # Format the Go code
 format:
@@ -55,7 +55,8 @@ imageGithubCloud:
 	@echo "*****************************************************"
 	@echo "Build for ${TARGETOS} with ${TARGETARCH} architecture"
 	@echo "*****************************************************"
-	docker build --build-arg targetos=${TARGETOS} --build-arg targetarch=${TARGETARCH} --build-arg teletoken=${TELE_TOKEN} . -t ${GH_PACKAGE_REPOSITORY}/${GH_PACKAGE_NAME}:${VERSION}-${TARGETOS}-${TARGETARCH}
+	# docker build --build-arg targetos=${TARGETOS} --build-arg targetarch=${TARGETARCH} --build-arg teletoken=${TELE_TOKEN} . -t ${GH_PACKAGE_REPOSITORY}/${GH_PACKAGE_NAME}:${VERSION}-${TARGETOS}-${TARGETARCH}
+	docker build --build-arg targetos=${TARGETOS} --build-arg targetarch=${TARGETARCH} . -t ${GH_PACKAGE_REPOSITORY}/${GH_PACKAGE_NAME}:${VERSION}-${TARGETOS}-${TARGETARCH}
 
 # Build the Docker image with the specified build arguments
 imageGoogleCloud:

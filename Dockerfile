@@ -29,8 +29,8 @@ COPY --from=builder /go/src/app/kbot .
 RUN apk add --no-cache ca-certificates
 
 # Declare the ARG and then set the environment variable in the final stage
-ARG teletoken=""
-ENV TELE_TOKEN=$teletoken
+# ARG teletoken=""
+# ENV TELE_TOKEN=$teletoken
 
 # Set the entrypoint to the built binary
 CMD ["./kbot", "start"]
