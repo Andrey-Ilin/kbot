@@ -78,6 +78,35 @@ make image TARGETOS=windows TARGETARCH=arm64
 ./kbot version
 ```
 
+# KBOT-CICD Pipeline
+
+## Overview
+
+This pipeline automates the CI/CD process for the KBOT project. It is triggered by pushes or pull requests to the `develop` branch.
+
+```mermaid
+graph TD;
+    A[Push to 'develop' branch] --> B[CI Job];
+    A[Pull request to 'develop' branch] --> B[CI Job];
+    
+    subgraph CI Job
+        B1[Checkout Code]
+        B2[Set VERSION variable]
+        B3[Run Tests]
+        B4[Build and Push Docker Image]
+    end
+
+    B --> C[CD Job];
+
+    subgraph CD Job
+        C1[Checkout Code]
+        C2[Set VERSION variable]
+        C3[Update Helm Chart]
+        C4[Configure Git and Push Changes]
+    end
+```    
+
+
 
 
 
