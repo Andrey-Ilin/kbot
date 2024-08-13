@@ -39,7 +39,7 @@ spec:
           volumeMounts:
           - mountPath: /dev/mem
             name: dev-mem
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}-{{ .Values.image.arch }}
           env:
           - name: {{ .Values.secret.env }}
             valueFrom:
