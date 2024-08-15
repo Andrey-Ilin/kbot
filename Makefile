@@ -49,7 +49,7 @@ get:
 
 # Build the Go binary with the specified OS and architecture
 build: get latestVersion format
-	CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -v -o kbot -ldflags "-X="github.com/andrey-ilin/kbot/cmd.appVersion=${VERSION}
+	GO111MODULE=on CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -v -o kbot -ldflags "-X="github.com/andrey-ilin/kbot/cmd.appVersion=${VERSION}
 
 imageGithubCloud:
 	@echo "*****************************************************"
