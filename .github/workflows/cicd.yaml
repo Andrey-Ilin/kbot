@@ -51,7 +51,7 @@ jobs:
         with:
           cmd: |
             version=$(yq e '.version' helm/Chart.yaml)
-              if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
               # Increment the patch version
               new_version=$(echo "$version" | awk -F. '{print $1"."$2"."$3+1}')
               yq -i ".version = \"$new_version\"" helm/Chart.yaml
@@ -62,7 +62,6 @@ jobs:
             # Update the image tag
             yq -i '.image.tag=strenv(VERSION)' helm/values.yaml
 
-          
       - name: Configure Git and Push
         run: |
           git config user.name "GitHub Actions"
