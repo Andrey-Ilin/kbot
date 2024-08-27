@@ -49,7 +49,7 @@ jobs:
 
       - uses: mikefarah/yq@master
         with:
-          cmd: yq -i '.image.tag=strenv(VERSION)' helm/values.yaml
+          cmd: yq -i '.image.tag=strenv(VERSION)' helm/values.yaml && yq -i '.version |= split(".") | .[2] |= ((. | tonumber) + 1 | tostring) | join(".")' helm/Chart.yaml
 
       - name: Configure Git and Push
         run: |
