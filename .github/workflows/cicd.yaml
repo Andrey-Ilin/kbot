@@ -54,7 +54,6 @@ jobs:
             # Update the image tag
             yq -i '.image.tag=strenv(VERSION)' helm/values.yaml
 
-          
       - name: Configure Git and Push
         run: |
           git config user.name "GitHub Actions"
