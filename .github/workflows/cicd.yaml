@@ -50,7 +50,7 @@ jobs:
       - uses: mikefarah/yq@master
         with:
           cmd: |
-            yq -i '.version |= split(".") | .[2] |= (.[2] | tonumber + 1 | tostring) | join(".")' helm/Chart.yaml
+            yq e '.version |= (split(".") | .[0] + "." + .[1] + "." + (.[2] | tonumber + 1 | tostring))' -i helm/Chart.yaml
             # Update the image tag
             yq -i '.image.tag=strenv(VERSION)' helm/values.yaml
 
