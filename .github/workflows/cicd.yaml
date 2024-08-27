@@ -49,11 +49,18 @@ jobs:
 
       - uses: mikefarah/yq@master
         with:
-          cmd: >
-            yq -i '.image.tag=strenv(VERSION)' helm/values.yaml &&
-            yq -i '.version |= split(".") | .[2] |= ((. | tonumber) + 1 | tostring) | join(".")' helm/Chart.yaml
+          cmd: |
+            # Check if version exists and is in correct format
+            if [ "$(yq e '.version' helm/Chart.yaml)" != "null" ] && [[ "$(yq e '.version' helm/Chart.yaml)" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            # Increment the patch version
+              yq -i '.version |= split(".") | .[2] |= ((. | tonumber) + 1 | tostring) | join(".")' helm/Chart.yaml
+            else
+              # Set version to 0.1.0 if it doesn't exist or is in incorrect format
+              yq -i '.version = "0.1.0"' helm/Chart.yaml
+            fi
+            # Update the image tag
+            yq -i '.image.tag=strenv(VERSION)' helm/values.yaml
           
-
       - name: Configure Git and Push
         run: |
           git config user.name "GitHub Actions"
