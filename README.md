@@ -107,7 +107,11 @@ graph TD;
 ```
 
 
-## Terraform...
+## Terraform
+
+```
+https://github.com/Andrey-Ilin/kbot-infra
+```
 
 
 
