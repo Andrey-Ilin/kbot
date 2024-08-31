@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -17,33 +18,35 @@ var (
 )
 
 func getWeather(city string) (string, error) {
-	url := fmt.Sprintf("https://wttr.in/%s?format=%%C+%%t+%%w", city)
+	url := fmt.Sprintf("https://wttr.in/%s?format=3", city)
+	
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
-
-	var weather string
-	_, err = fmt.Fscanf(resp.Body, "%s", &weather)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
 
-	return weather, nil
+	weatherReport := string(body)
+	
+	// Add some emoji to make it more visually appealing
+	weatherReport = strings.ReplaceAll(weatherReport, "°C", "°C🌡")
+	weatherReport = strings.ReplaceAll(weatherReport, "km/h", "km/h💨")
+	
+	return weatherReport, nil
 }
 
 var kbotCmd = &cobra.Command{
-	Use:     "kbot",
-	Aliases: []string{"start"},
-	Short:   "A brief description of your command",
-	Long:    `A longer description...`,
+	Use:     "start",
+	Aliases: []string{"run"},
+	Short:   "Start the Telegram bot",
+	Long:    `Start the Telegram bot and begin listening for messages.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("kbot %s started", appVersion)
+		fmt.Printf("kbot %s started\n", appVersion)
 
 		kbot, err := telebot.NewBot(telebot.Settings{
 			URL:    "",
@@ -57,7 +60,7 @@ var kbotCmd = &cobra.Command{
 		}
 
 		kbot.Handle(telebot.OnText, func(m telebot.Context) error {
-			log.Printf(m.Message().Payload, m.Text())
+			log.Printf("Received message: %s", m.Text())
 			msg := m.Text()
 			var err error
 
@@ -67,7 +70,9 @@ var kbotCmd = &cobra.Command{
 				if err != nil {
 					err = m.Send(fmt.Sprintf("Error getting weather for %s: %v", city, err))
 				} else {
-					err = m.Send(fmt.Sprintf("Weather in %s: %s", city, weather))
+					// Add a title to the weather report
+					weatherWithTitle := fmt.Sprintf("<b>Weather in %s</b>\n%s", city, weather)
+					err = m.Send(weatherWithTitle, &telebot.SendOptions{ParseMode: telebot.ModeHTML})
 				}
 			} else {
 				switch msg {
