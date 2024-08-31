@@ -113,6 +113,8 @@ graph TD;
 https://github.com/Andrey-Ilin/kbot-infra
 ```
 
+## Git hooks
+
 
 
 
