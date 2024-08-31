@@ -1,12 +1,11 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -17,17 +16,32 @@ var (
 	TeleToken = os.Getenv("TELE_TOKEN")
 )
 
-// kbotCmd represents the kbot command
+func getWeather(city string) (string, error) {
+	url := fmt.Sprintf("https://wttr.in/%s?format=%%C+%%t+%%w", city)
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	var weather string
+	_, err = fmt.Fscanf(resp.Body, "%s", &weather)
+	if err != nil {
+		return "", err
+	}
+
+	return weather, nil
+}
+
 var kbotCmd = &cobra.Command{
 	Use:     "kbot",
 	Aliases: []string{"start"},
 	Short:   "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:    `A longer description...`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("kbot %s started", appVersion)
 
@@ -43,24 +57,35 @@ to quickly create a Cobra application.`,
 		}
 
 		kbot.Handle(telebot.OnText, func(m telebot.Context) error {
-
 			log.Printf(m.Message().Payload, m.Text())
-			payload := m.Message().Payload
+			msg := m.Text()
+			var err error
 
-			switch payload {
-			case "hello":
-				err = m.Send(fmt.Sprintf("Hello I'm kbot %s", appVersion))
-			case "bye":
-				err = m.Send(fmt.Sprintf("Bye from kbot %s", appVersion))
-			case "whatsup":
-				err = m.Send(fmt.Sprintf("All fine %s", appVersion))
+			if strings.HasPrefix(strings.ToLower(msg), "weather ") {
+				city := strings.TrimPrefix(strings.ToLower(msg), "weather ")
+				weather, err := getWeather(city)
+				if err != nil {
+					err = m.Send(fmt.Sprintf("Error getting weather for %s: %v", city, err))
+				} else {
+					err = m.Send(fmt.Sprintf("Weather in %s: %s", city, weather))
+				}
+			} else {
+				switch msg {
+				case "hello":
+					err = m.Send(fmt.Sprintf("Hello I'm kbot %s", appVersion))
+				case "bye":
+					err = m.Send(fmt.Sprintf("Bye from kbot %s", appVersion))
+				case "whatsup":
+					err = m.Send(fmt.Sprintf("All fine %s", appVersion))
+				default:
+					err = m.Send("I don't understand that command. Try 'weather [city]' to get weather information.")
+				}
 			}
 
 			return err
 		})
 
 		kbot.Start()
-
 	},
 }
 
