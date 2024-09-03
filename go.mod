@@ -2,8 +2,6 @@ module github.com/andrey-ilin/kbot
 
 go 1.21
 
-toolchain go1.23.0
-
 require (
 	github.com/hirosassa/zerodriver v0.1.4
 	github.com/spf13/cobra v1.8.1
