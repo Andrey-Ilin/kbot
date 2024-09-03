@@ -1,7 +1,7 @@
 # Dockerfile
 
 # Use a base image with Go installed
-FROM quay.io/projectquay/golang:1.20 as builder
+FROM quay.io/projectquay/golang:1.21 as builder
 
 # Define build arguments for target OS and architecture
 ARG targetos=linux

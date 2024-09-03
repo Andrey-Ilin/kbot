@@ -22,7 +22,7 @@ import (
 )
 
 var (
-	TeleToken = os.Getenv("TELE_TOKEN")
+	TeleToken   = os.Getenv("TELE_TOKEN")
 	MetricsHost = os.Getenv("METRICS_HOST")
 )
 
@@ -61,7 +61,7 @@ func pmetrics(ctx context.Context, payload string) {
 	// Get the global MeterProvider and create a new Meter with the name "kbot_light_signal_counter"
 	meter := otel.GetMeterProvider().Meter("kbot_weather_by_city")
 
-	message := "";
+	message := ""
 
 	if strings.HasPrefix(strings.ToLower(payload), "weather ") {
 		message = strings.TrimPrefix(strings.ToLower(payload), "weather ")
@@ -78,7 +78,7 @@ func pmetrics(ctx context.Context, payload string) {
 
 func getWeather(city string) (string, error) {
 	url := fmt.Sprintf("https://wttr.in/%s?format=3", city)
-	
+
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", err
@@ -91,11 +91,11 @@ func getWeather(city string) (string, error) {
 	}
 
 	weatherReport := string(body)
-	
+
 	// Add some emoji to make it more visually appealing
 	weatherReport = strings.ReplaceAll(weatherReport, "°C", "°C🌡")
 	weatherReport = strings.ReplaceAll(weatherReport, "km/h", "km/h💨")
-	
+
 	return weatherReport, nil
 }
 
@@ -106,7 +106,7 @@ var kbotCmd = &cobra.Command{
 	Long:    `Start the Telegram bot and begin listening for messages.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		logger := zerodriver.NewProductionLogger();
+		logger := zerodriver.NewProductionLogger()
 
 		kbot, err := telebot.NewBot(telebot.Settings{
 			URL:    "",
