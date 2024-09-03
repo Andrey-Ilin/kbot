@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -115,7 +115,7 @@ var kbotCmd = &cobra.Command{
 		})
 
 		if err != nil {
-			logger.Fatalf("Please check TELE_TOKEN env variable, %s", err)
+			logger.Fatal()
 			return
 		} else {
 			logger.Info().Str("Version", appVersion).Msg("kbot started")
@@ -160,8 +160,9 @@ var kbotCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(kbotCmd)
+	ctx := context.Background()
 	initMetrics(ctx)
+	rootCmd.AddCommand(kbotCmd)
 
 	// Here you will define your flags and configuration settings.
 
