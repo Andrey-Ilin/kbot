@@ -1,7 +1,6 @@
 # Default values for helm.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-
 replicaCount: 1
 image:
   repository: ghcr.io/andrey-ilin/kbot
@@ -11,9 +10,10 @@ image:
   os: linux
   arch: amd64
 secret:
-  # secret delivered manualy
+  # secret delivered manually
   name: "kbot"
   env: "TELE_TOKEN"
   key: "token"
 securityContext:
   privileged: true
+metricsHost: "otel-collector:4317"
