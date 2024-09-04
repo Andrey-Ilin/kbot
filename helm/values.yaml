@@ -6,7 +6,7 @@ image:
   repository: ghcr.io/andrey-ilin/kbot
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.0.6-a028f8e"
+  tag: "v1.0.6-2a47e58"
   os: linux
   arch: amd64
 secret:
@@ -16,4 +16,4 @@ secret:
   key: "token"
 securityContext:
   privileged: true
-metricsHost: "otel-collector:4317"
+metricsHost: "otel-collector-opentelemetry-collector:4317"
