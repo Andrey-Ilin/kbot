@@ -13,3 +13,10 @@ Sample configuration for Kbot that send logs to [OpenTelemetry Collector] and me
 export TELE_TOKEN=<TOKEN>
 docker-compose up
 ```
+
+## Demo
+
+![](./otel-demo.gif)
+
+### Next steps:
+Run in Kubernetes
